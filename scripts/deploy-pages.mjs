@@ -32,9 +32,11 @@ fs.writeFileSync(path.join("out", ".nojekyll"), "");
 
 const sha = read("git rev-parse --short HEAD");
 const opts = { cwd: "out" };
-run("git init -q -b gh-pages", opts);
-run("git add -A", opts);
-run(`git -c user.name="${read("git config user.name")}" -c user.email="${read("git config user.email")}" commit -q -m "Deploy ${sha}"`, opts);
-run(`git push -f "${remote}" gh-pages`, opts);
+// core.longpaths: Windows checkouts in deep folders exceed MAX_PATH otherwise.
+const git = "git -c core.longpaths=true";
+run(`${git} init -q -b gh-pages`, opts);
+run(`${git} add -A`, opts);
+run(`${git} -c user.name="${read("git config user.name")}" -c user.email="${read("git config user.email")}" commit -q -m "Deploy ${sha}"`, opts);
+run(`${git} push -f "${remote}" gh-pages`, opts);
 fs.rmSync(path.join("out", ".git"), { recursive: true, force: true });
 console.log(`\nPublished. Live in about a minute at ${siteUrl}/`);
