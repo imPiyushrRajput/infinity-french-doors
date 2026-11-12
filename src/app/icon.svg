@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0b1b36"/>
+  <!-- left leaf (blue) -->
+  <path d="M14 16 L30 20 L30 48 L14 52 Z" fill="#1d6bc9"/>
+  <path d="M17 20.5 L27 23 L27 45 L17 47.5 Z" fill="#0b1b36"/>
+  <!-- right leaf (gold) -->
+  <path d="M50 16 L34 20 L34 48 L50 52 Z" fill="#c9a24a"/>
+  <path d="M47 20.5 L37 23 L37 45 L47 47.5 Z" fill="#0b1b36"/>
+  <!-- handles -->
+  <circle cx="26" cy="34" r="1.6" fill="#c9a24a"/>
+  <circle cx="38" cy="34" r="1.6" fill="#1d6bc9"/>
+</svg>
