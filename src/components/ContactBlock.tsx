@@ -6,7 +6,18 @@ import { ArrowRight, CheckIcon, MailIcon, PhoneIcon, PinIcon } from "./Icons";
 import { SectionHeading } from "./Shared";
 import CopyButton from "./CopyButton";
 
-type Status = "idle" | "sending" | "sent" | "error";
+type Status = "idle" | "sending" | "sent" | "drafted" | "error";
+
+/** Optional form service (Formspree, Web3Forms, Getform...). Without it the visitor's email app opens pre-filled. */
+const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT;
+
+const FIELD_LABELS: Record<string, string> = {
+  firstName: "First name",
+  lastName: "Last name",
+  email: "Email",
+  phone: "Phone",
+  message: "Message",
+};
 type Errors = Partial<Record<"firstName" | "lastName" | "email" | "phone" | "message", string>>;
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"] as const;
@@ -66,11 +77,22 @@ export default function ContactBlock({ compact = false }: { compact?: boolean })
       (form.elements.namedItem(first) as HTMLElement | null)?.focus();
       return;
     }
+    if (!FORM_ENDPOINT) {
+      const name = [data.firstName, data.lastName].filter(Boolean).join(" ");
+      const body = Object.entries(data)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${FIELD_LABELS[k] ?? k}: ${v}`)
+        .join("\n");
+      const subject = `Website enquiry from ${name || "a visitor"}`;
+      window.location.href = `mailto:${business.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setStatus("drafted");
+      return;
+    }
     setStatus("sending");
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ ...data, utm, page: window.location.pathname }),
       });
       if (!res.ok) throw new Error("failed");
@@ -146,6 +168,11 @@ export default function ContactBlock({ compact = false }: { compact?: boolean })
               {status === "sent" && (
                 <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200">
                   <CheckIcon className="h-4 w-4" /> Thank you! We&apos;ll be in touch within one working day.
+                </span>
+              )}
+              {status === "drafted" && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200">
+                  <CheckIcon className="h-4 w-4" /> Your email app has opened with the enquiry ready. Just press send.
                 </span>
               )}
               {status === "error" && (

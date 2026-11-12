@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { galleryCategories, products, projectPages } from "@/data/site";
 import { abs } from "@/lib/seo";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const entry = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] = "monthly") => ({

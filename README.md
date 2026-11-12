@@ -18,7 +18,7 @@ npm start
 | Path | What it is |
 |---|---|
 | `src/data/site.ts` | **All site copy and image URLs** — products, nav, FAQs, testimonials, leadership, timeline, gallery, business details. Edit content here. |
-| `src/app/` | Routes: `/`, `/about-us`, `/products/[slug]`, `/projects/[slug]`, `/gallery/[[...filter]]`, `/videos`, `/contact-us`, `/api/contact` |
+| `src/app/` | Routes: `/`, `/about-us`, `/products/[slug]`, `/projects/[slug]`, `/gallery/[[...filter]]`, `/videos`, `/contact-us` |
 | `src/components/` | Header (sticky, dropdowns, mobile drawer), Footer, Hero (3D door + slideshow), Testimonials, FAQ accordion, Lightbox / ImageGrid, Counter, ContactBlock, shared blocks (PageHeader, CtaBanner, ProductCard, SectionHeading) |
 | `src/components/motion/` | `SmoothScroll` (Lenis), `ScrollProgress`, `Reveal` / `Stagger` / `WordReveal`, `ParallaxImage` / `ParallaxLayer`, `TiltCard`, `Magnetic`, `TextMarquee` |
 | `src/components/three/DoorScene.tsx` | Procedural 3D French door (frame, two hinged leaves, muntins, transom, gold hardware). Leaves open with scroll and on hover; the door tilts toward the cursor. Loaded client-side only. |
@@ -29,7 +29,7 @@ Images are loaded directly from `https://www.infinitywindoors.com` (the current 
 
 ## Contact form
 
-`ContactBlock` posts to `src/app/api/contact/route.ts`, which validates the fields and currently just logs the enquiry on the server. Wire it to an email provider (Resend, SendGrid, SMTP via Nodemailer) or a CRM before launch.
+`ContactBlock` validates the fields, then posts JSON to `NEXT_PUBLIC_FORM_ENDPOINT` (any form service such as Formspree or Web3Forms) when it is set. Without it, the visitor's email app opens with the enquiry pre-filled to the business address. This works on static hosting; see the GitHub Pages section below.
 
 ## Content fixes applied vs. the old site
 
@@ -93,3 +93,14 @@ Static generation for every page, `next/image` everywhere, fonts via `next/font`
 - **Equal-height cards** across product, project and sub-product grids (staggered offsets removed, TiltCard wrapper stretches).
 - **Layout shift**: counters reserve their final width, feature captions/legends no longer collapse between steps, 3D canvases have fixed heights. Measured CLS while scrolling the full home page: 0.
 - Section spacing tightened (`py-16 lg:py-24`), hero no longer forces full viewport height on phones.
+
+## Deploying to GitHub Pages
+
+`npm run deploy:pages` builds a static export and force-pushes it to the `gh-pages` branch, which GitHub Pages serves at `https://<owner>.github.io/<repo>/` (Settings, Pages: deploy from branch `gh-pages`, folder `/`). Run it again after every change you want the client to see.
+
+- `GITHUB_PAGES=true` switches `next.config.ts` to `output: "export"`, adds the `/<repo>` base path and trailing slashes, and turns off image optimisation and redirects (both need a server).
+- `scripts/flatten-segments.mjs` runs after the build so client-side prefetch files resolve on a static host.
+- The preview is built with `NEXT_PUBLIC_NOINDEX=1` (robots `Disallow: /` and `noindex` meta) so it never competes with the real domain in search.
+- **Contact form:** there is no server on Pages, so the form opens the visitor's email app pre-filled to the business address. To receive submissions directly, create a form endpoint (Formspree, Web3Forms, Getform) and deploy with `FORM_ENDPOINT=<url> npm run deploy:pages`.
+- GitHub's free plan only serves Pages from **public** repositories.
+- Auto-deploy on every push needs a GitHub Actions workflow; pushing one requires the `workflow` token scope (`gh auth refresh -s workflow`).

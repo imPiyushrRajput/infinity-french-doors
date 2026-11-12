@@ -8,7 +8,7 @@ import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import ScrollProgress from "@/components/motion/ScrollProgress";
 import { business } from "@/data/site";
-import { JsonLd, organizationLd, websiteLd } from "@/lib/seo";
+import { JsonLd, NOINDEX, SITE_URL, organizationLd, websiteLd } from "@/lib/seo";
 
 const body = Plus_Jakarta_Sans({
   variable: "--font-body",
@@ -28,7 +28,7 @@ const description =
   "Infinity French Doors manufactures galvanised steel French doors, safety doors, French windows, XXL doors and garden benches in Nashik and Jalgaon, delivered across India.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.infinitywindoors.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: business.pageTitle,
     template: `%s | ${business.brand}`,
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     description,
     images: [business.logo],
   },
-  robots: { index: true, follow: true },
+  robots: NOINDEX ? { index: false, follow: false } : { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

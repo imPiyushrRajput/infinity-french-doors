@@ -5,6 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { galleryCategories, galleryItems } from "@/data/site";
 import { Lightbox, useLightbox } from "./Lightbox";
+import { withBase } from "@/lib/paths";
 
 /** Keeps the tab title in sync with the client-side filter. */
 function setTitle(t: string) {
@@ -26,7 +27,7 @@ export default function GalleryBrowser({ initial }: { initial: string }) {
   const choose = (slug: string) => {
     setActive(slug);
     const href = slug === "all" ? "/gallery" : `/gallery/${slug}`;
-    window.history.replaceState(window.history.state, "", href);
+    window.history.replaceState(window.history.state, "", withBase(href));
     const label = galleryCategories.find((c) => c.slug === slug)?.label;
     setTitle(slug === "all" || !label ? "Gallery" : `${label} Gallery`);
   };

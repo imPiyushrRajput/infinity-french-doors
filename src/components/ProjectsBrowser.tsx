@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { projectPages } from "@/data/site";
 import { ImageGrid } from "./Lightbox";
+import { withBase } from "@/lib/paths";
 
 /** Keeps the tab title in sync with the client-side filter. */
 function setTitle(t: string) {
@@ -17,7 +18,7 @@ export default function ProjectsBrowser({ initial }: { initial: string }) {
 
   const choose = (slug: string) => {
     setActive(slug);
-    window.history.replaceState(window.history.state, "", `/projects/${slug}`);
+    window.history.replaceState(window.history.state, "", withBase(`/projects/${slug}`));
     const title = projectPages.find((p) => p.slug === slug)?.title;
     if (title) setTitle(title);
   };

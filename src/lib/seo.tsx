@@ -2,7 +2,18 @@ import { business, faqs, products, type Product } from "@/data/site";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.infinitywindoors.com";
 
-export const abs = (path: string) => new URL(path, SITE_URL).toString();
+const TRAILING = process.env.NEXT_PUBLIC_TRAILING_SLASH === "1";
+
+/** Absolute URL for a site path; keeps any sub-path in SITE_URL (e.g. GitHub Pages /repo). */
+export const abs = (path: string) => {
+  const [p, hash] = path.split("#");
+  // Files such as /sitemap.xml never get a trailing slash.
+  const withSlash = TRAILING && !p.endsWith("/") && !/\.[a-z0-9]+$/i.test(p) ? `${p}/` : p;
+  return `${SITE_URL.replace(/\/$/, "")}${withSlash}${hash !== undefined ? `#${hash}` : ""}`;
+};
+
+/** Preview deployments (e.g. GitHub Pages) set NEXT_PUBLIC_NOINDEX=1 to stay out of search results. */
+export const NOINDEX = process.env.NEXT_PUBLIC_NOINDEX === "1";
 
 /* ---------- JSON-LD builders ---------- */
 
