@@ -239,6 +239,41 @@ body {
   color: transparent;
 }
 
+/* Footer wordmark: a gold spotlight clipped to the letters */
+@property --wm-x {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+@property --wm-y {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 55%;
+}
+.footer-wordmark-fill {
+  color: transparent;
+  background: radial-gradient(
+    circle at var(--wm-x) var(--wm-y),
+    rgb(240 214 150 / 0.95) 0,
+    rgb(212 173 87 / 0.55) 9vw,
+    transparent 22vw
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.footer-wordmark:not([data-hover]) .footer-wordmark-fill {
+  animation: wordmark-sweep 10s ease-in-out infinite;
+}
+@keyframes wordmark-sweep {
+  0%, 100% { --wm-x: 8%; --wm-y: 30%; }
+  50% { --wm-x: 92%; --wm-y: 75%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-wordmark:not([data-hover]) .footer-wordmark-fill {
+    animation: none;
+  }
+}
+
 .perspective-1200 {
   perspective: 1200px;
 }

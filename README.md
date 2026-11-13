@@ -124,3 +124,23 @@ Shared rules for all of them:
 - **Touch.** `.scene-pan-y` lets a vertical swipe over any canvas scroll the page; horizontal drags rotate the model.
 - New product range? Add an entry to `productModels` keyed by the product slug.
 - Finish colours in the viewer are illustrative previews, not a confirmed shade card.
+
+## Presence section and footer (13 Nov 2026)
+
+- **Presence** (`src/components/Presence.tsx`, `three/PresenceScene.tsx`): an abstract 3D "orbit" rather than a map, so it does not repeat the Working Areas route map. The two plants are tall gold French door frames at the centre; the experience centers (count taken from `networkStats`) are small door portals circling them with a light pulse running round the ring. Selecting a plant (tabs or clicking its door) shows its address, Google Maps directions and phone. The original location image opens from "Full map". Labels are canvas-texture sprites, not drei `Html`.
+- **Footer** (`Footer.tsx`, `FooterParts.tsx`): brand statement, four contact tiles (call, WhatsApp, email, brochure), Explore / Products / Our plants columns, social row, and a full-width INFINITY wordmark with a gold spotlight that sweeps by itself and follows the pointer (`.footer-wordmark-fill` in `globals.css`). Back-to-top lives only in the floating actions (`FloatingActions.tsx`), which now scrolls through Lenis.
+- Plants in `src/data/site.ts` have a `city` field; `directionsUrl(address)` builds the Maps link.
+
+## Section redesigns (13 Nov 2026, round 2)
+
+| Section | Component | What it does now |
+| --- | --- | --- |
+| Why Choose Us | `WhyChooseUs.tsx` | Four highlight cards drawn from the existing paragraphs (full text kept in a "Read the full story" disclosure that stays in the DOM). Image has a clip reveal and two floating fact badges. The city chips were removed because Working Areas already lists the cities. |
+| Stats | `StatsBand.tsx` | Staggered two-column strip of oversized outlined numbers; a gold fill rises from the bottom while they count. One count drives both layers. |
+| Comparison | `Comparison.tsx` | Head-to-head: pick a rival, every attribute lines up against Infinity (rows with a stated Infinity value first). No sideways scroll on phones. The full four-way table opens from a toggle. |
+| Projects | `HomeProjects.tsx` | Expanding image panels on desktop (hover/focus widens a panel), swipeable snap carousel on phones. |
+| Testimonials | `Testimonials.tsx` | Light theme, draggable card deck with avatar chips and arrows. |
+| Home order | `app/page.tsx` | Contact form moved below Testimonials; FAQ tinted cream so backgrounds alternate. Footer starts with a gold hairline and a lighter navy so it separates from Presence. |
+| About: Timeline | `Timeline.tsx` | Pinned horizontal story (`.pin-track`), year rail fills in gold, large background year. Short screens get a swipeable row. |
+| About: Work Process | `WorkProcess.tsx` | A gold line draws down the page on scroll and lights each step; steps alternate sides on desktop. Not pinned. |
+| Videos | `VideoShowcase.tsx` | Featured player on a light "screening room"; YouTube loads only after Play. A playlist rail appears automatically when `videos` has more than one entry. |

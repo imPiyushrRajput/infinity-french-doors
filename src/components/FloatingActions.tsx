@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { business } from "@/data/site";
 import { CloseIcon, MailIcon, PhoneIcon, WhatsappIcon } from "./Icons";
+import { scrollToY } from "./motion/SmoothScroll";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -18,7 +19,7 @@ export default function FloatingActions() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const toTop = () => scrollToY(0);
 
   const actions = [
     {

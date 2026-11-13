@@ -1,9 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import Counter from "@/components/Counter";
 import KeyFeatures from "@/components/KeyFeatures";
 import WorkingAreas from "@/components/WorkingAreas";
+import Presence from "@/components/Presence";
+import Comparison from "@/components/Comparison";
+import WhyChooseUs from "@/components/WhyChooseUs";
+import HomeProjects from "@/components/HomeProjects";
+import StatsBand from "@/components/StatsBand";
 import { JsonLd, faqLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Testimonials from "@/components/Testimonials";
@@ -12,18 +16,11 @@ import ContactBlock from "@/components/ContactBlock";
 import { CtaBanner, ProductCard, SectionHeading } from "@/components/Shared";
 import { ParallaxImage, ParallaxLayer } from "@/components/motion/Parallax";
 import { Item, Reveal, Stagger, scaleIn } from "@/components/motion/Reveal";
-import { Magnetic, TextMarquee, TiltCard } from "@/components/motion/Interactive";
+import { Magnetic, TextMarquee } from "@/components/motion/Interactive";
 import { ArrowRight, CheckIcon } from "@/components/Icons";
 import {
-  IMG,
   aboutHome,
-  comparison,
-  homeProjects,
-  networkStats,
-  presenceMap,
   products,
-  stats,
-  whyChooseUs,
 } from "@/data/site";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -133,156 +130,25 @@ export default function HomePage() {
       <CtaBanner />
 
       {/* 1.7 Why choose us */}
-      <section className="py-16 lg:py-24">
-        <div className="container-x grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-          <div className="order-2 lg:order-1">
-            <SectionHeading eyebrow={whyChooseUs.eyebrow} title={whyChooseUs.heading} accent={["beautiful"]} />
-            <Reveal delay={0.2}>
-              <div className="prose-site mt-7 leading-relaxed text-ink-500">
-                {whyChooseUs.paragraphs.map((p) => (
-                  <p key={p.slice(0, 24)}>{p}</p>
-                ))}
-              </div>
-            </Reveal>
-            <Stagger className="mt-8 flex flex-wrap gap-2" stagger={0.05}>
-              {["Mumbai", "Pune", "Chhatrapati Sambhajinagar", "Ahmedabad", "Vadodara", "Indore"].map((c) => (
-                <Item key={c}>
-                  <span className="inline-block rounded-full border border-navy-950/10 bg-white px-4 py-1.5 text-xs font-semibold text-navy-900 transition-all duration-500 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-100">
-                    {c}
-                  </span>
-                </Item>
-              ))}
-            </Stagger>
-          </div>
-          <div className="relative order-1 lg:order-2">
-            <ParallaxLayer distance={-30} className="absolute -right-6 -top-6 h-full w-full rounded-[2rem] border border-gold-400/40" />
-            <Reveal variants={scaleIn}>
-              <ParallaxImage
-                src={whyChooseUs.image}
-                alt="Infinity French Doors showroom"
-                className="aspect-square rounded-[2rem] shadow-soft"
-                strength={10}
-                sizes="(min-width: 1024px) 50vw, 100vw"
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <WhyChooseUs />
 
       {/* 1.8 Stats */}
-      <section className="relative isolate overflow-hidden bg-navy-950 py-24 text-white lg:py-32">
-        <ParallaxImage src={`${IMG}resources/bannersog.png`} alt="" className="absolute inset-0" imgClassName="opacity-25" strength={22} />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-950 via-navy-950/70 to-navy-950" />
-        <Stagger className="container-x relative grid gap-12 sm:grid-cols-2 lg:grid-cols-4" stagger={0.12}>
-          {stats.map((s) => (
-            <Item key={s.label} className="text-center lg:border-l lg:border-white/10 lg:first:border-0">
-              <div className="font-display text-6xl font-medium text-gold-400 lg:text-7xl">
-                <Counter value={s.value} suffix={s.suffix} />
-              </div>
-              <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-white/60">{s.label}</div>
-            </Item>
-          ))}
-        </Stagger>
-      </section>
-
-      {/* 1.9 Contact */}
-      <ContactBlock />
+      <StatsBand />
 
       {/* 1.10 Comparison */}
-      <section className="bg-cream-100 py-16 lg:py-24">
-        <div className="container-x">
-          <SectionHeading
-            eyebrow="Know the difference"
-            title="How Infinity compares"
-            accent={["compares"]}
-            text="Why galvanised steel French doors outperform aluminium sliders, fabricated channel gates and wooden doors."
-            align="center"
-          />
-          <Reveal delay={0.2} className="card mt-14 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-                <thead>
-                  <tr className="bg-navy-950 text-white">
-                    <th className="px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-white/60">#</th>
-                    <th className="px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-white/60">Type</th>
-                    {comparison.columns.map((c, i) => (
-                      <th
-                        key={c}
-                        className={`px-5 py-4 text-[11px] font-semibold uppercase tracking-wider ${
-                          i === comparison.columns.length - 1 ? "bg-brand-600 text-white" : "text-white/80"
-                        }`}
-                      >
-                        {c}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparison.rows.map((r, ri) => (
-                    <tr key={r.type} className="border-t border-navy-950/5 transition-colors odd:bg-white even:bg-cream-50 hover:bg-gold-100/40">
-                      <td className="px-5 py-3.5 font-display italic text-ink-500">{ri + 1}</td>
-                      <td className="px-5 py-3.5 font-semibold text-navy-950">{r.type}</td>
-                      {r.values.map((v, vi) => (
-                        <td
-                          key={vi}
-                          className={`px-5 py-3.5 align-top ${
-                            vi === r.values.length - 1 ? "bg-brand-100/60 font-medium text-navy-950" : "text-ink-700"
-                          }`}
-                        >
-                          {v}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <Comparison />
 
       {/* 1.11 Projects */}
-      <section className="py-16 lg:py-24">
-        <div className="container-x">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <SectionHeading eyebrow="Our Projects" title="Transforming Spaces with Excellence" accent={["excellence"]} />
-            <Reveal delay={0.3}>
-              <Link href="/projects/completed-projects" className="btn-outline shrink-0">
-                See all projects <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Reveal>
-          </div>
-          <Stagger className="mt-14 grid gap-6 md:grid-cols-3">
-            {homeProjects.map((p, i) => (
-              <Item key={p.title} className="h-full">
-                <TiltCard className="group card h-full overflow-hidden" max={5}>
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={p.image}
-                      alt={p.title}
-                      fill
-                      sizes="(min-width: 768px) 33vw, 100vw"
-                      className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-navy-950/0 transition-colors duration-700 group-hover:bg-navy-950/20" />
-                  </div>
-                  <div className="p-7">
-                    <span className="eyebrow">Project {String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="mt-3 font-display text-2xl font-medium text-navy-950">{p.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-ink-500">{p.text}</p>
-                  </div>
-                </TiltCard>
-              </Item>
-            ))}
-          </Stagger>
-        </div>
-      </section>
+      <HomeProjects />
 
       {/* 1.12 Testimonials */}
       <Testimonials />
 
+      {/* 1.9 Contact (moved below testimonials so the page ends on enquiry, FAQ and locations) */}
+      <ContactBlock />
+
       {/* 1.13 FAQ */}
-      <section className="scroll-mt-24 py-16 lg:py-24" id="faq">
+      <section className="scroll-mt-24 bg-cream-100 py-16 lg:py-24" id="faq">
         <div className="container-x grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <SectionHeading
@@ -308,45 +174,7 @@ export default function HomePage() {
       </section>
 
       {/* 1.14 Presence map + 1.15 network stats */}
-      <section className="relative overflow-hidden bg-navy-950 py-24 text-white lg:py-36">
-        <div className="grid-pattern absolute inset-0 opacity-60" />
-        <div className="pointer-events-none absolute -left-40 bottom-0 h-[500px] w-[500px] rounded-full bg-brand-500/15 blur-3xl" />
-        <div className="container-x relative grid items-center gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <SectionHeading
-              eyebrow="Widespread Network"
-              title="Our Presence Across Key Locations"
-              accent={["key", "locations"]}
-              text="Two manufacturing plants and a growing network of experience centers put Infinity within reach across Maharashtra and neighbouring states."
-              light
-            />
-            <Stagger className="mt-10 grid grid-cols-2 gap-6" delay={0.2}>
-              {networkStats.map((s) => (
-                <Item key={s.label}>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors duration-500 hover:border-gold-400/40">
-                    <div className="font-display text-5xl font-medium text-gold-400 sm:text-6xl">
-                      <Counter value={s.value} suffix={s.suffix} />
-                    </div>
-                    <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">{s.label}</div>
-                  </div>
-                </Item>
-              ))}
-            </Stagger>
-          </div>
-          <Reveal variants={scaleIn} className="lg:col-span-7">
-            <TiltCard className="overflow-hidden rounded-[2rem] bg-white/5 p-3 ring-1 ring-white/10" max={4} glare={false}>
-              <Image
-                src={presenceMap}
-                alt="Map of Infinity French Doors locations"
-                width={1200}
-                height={900}
-                sizes="(min-width: 1024px) 58vw, 100vw"
-                className="w-full rounded-[1.5rem] object-cover"
-              />
-            </TiltCard>
-          </Reveal>
-        </div>
-      </section>
+      <Presence />
     </>
   );
 }

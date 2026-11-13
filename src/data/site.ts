@@ -18,11 +18,13 @@ export const business = {
   plants: [
     {
       name: "Plant 1 · Nashik",
+      city: "Nashik",
       address:
         "Plot No GEN 17/14, Behind State Bank Of India, Satpur, Nashik - 422007 (Near Sakal Circle)",
     },
     {
       name: "Plant 2 · Jalgaon",
+      city: "Jalgaon",
       address: "F-58, near R.L.Square, MIDC Jalgaon - 425003",
     },
   ],
@@ -306,6 +308,10 @@ export const networkStats = [
   { value: 14, suffix: "+", label: "Experience Centers" },
   { value: 2, suffix: "", label: "Manufacturing Plants" },
 ];
+
+/** Google Maps directions to an address (opens the Maps app on phones). */
+export const directionsUrl = (address: string) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 
 export const comparison = {
   columns: [

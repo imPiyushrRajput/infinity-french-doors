@@ -8,6 +8,8 @@ import { Item, Reveal, Stagger, WordReveal, scaleIn } from "@/components/motion/
 import { TiltCard } from "@/components/motion/Interactive";
 import { aboutPage } from "@/data/site";
 import DoorAssembly from "@/components/DoorAssembly";
+import Timeline from "@/components/Timeline";
+import WorkProcess from "@/components/WorkProcess";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const { welcome, vision, leadership, timeline, highlights, process } = aboutPage;
+  const { welcome, vision, leadership, highlights } = aboutPage;
   return (
     <>
       <PageHeader
@@ -146,24 +148,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 2.5 Timeline */}
-      <section className="bg-cream-100 py-16 lg:py-24">
-        <div className="container-x">
-          <SectionHeading eyebrow={timeline.eyebrow} title={timeline.heading} accent={["excellence"]} align="center" />
-          <Stagger className="relative mt-20 grid gap-10 md:grid-cols-2 lg:grid-cols-4" stagger={0.15}>
-            <div className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-gold-500 to-transparent lg:block" />
-            {timeline.items.map((t) => (
-              <Item key={t.year} className="group relative">
-                <div className="relative z-10 inline-flex h-12 items-center rounded-full bg-navy-950 px-5 font-display text-xl font-medium text-gold-400 shadow-soft transition-transform duration-500 group-hover:-translate-y-1">
-                  {t.year}
-                </div>
-                <h3 className="mt-6 font-display text-2xl font-medium text-navy-950">{t.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-ink-500">{t.text}</p>
-              </Item>
-            ))}
-          </Stagger>
-        </div>
-      </section>
+      {/* 2.5 Timeline: pinned horizontal story */}
+      <Timeline />
 
       {/* 2.6 Office highlights */}
       <section className="py-16 lg:py-24">
@@ -180,28 +166,8 @@ export default function AboutPage() {
       {/* 3D: a door assembling itself on scroll */}
       <DoorAssembly />
 
-      {/* 2.8 Work process */}
-      <section className="py-16 lg:py-24">
-        <div className="container-x">
-          <SectionHeading eyebrow={process.eyebrow} title="Our Work Process" accent={["process"]} align="center" />
-          <Stagger className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {process.steps.map((s, i) => (
-              <Item key={s.title}>
-                <TiltCard className="group card relative h-full p-8" max={6}>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy-950 font-display text-xl font-medium text-gold-400 transition-transform duration-500 group-hover:scale-110">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="h-px w-16 bg-gold-400/60 transition-all duration-700 group-hover:w-28" />
-                  </div>
-                  <h3 className="mt-7 font-display text-2xl font-medium text-navy-950">{s.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-ink-500">{s.text}</p>
-                </TiltCard>
-              </Item>
-            ))}
-          </Stagger>
-        </div>
-      </section>
+      {/* 2.8 Work process: a path that draws itself on scroll */}
+      <WorkProcess />
     </>
   );
 }
