@@ -84,7 +84,8 @@ Static generation for every page, `next/image` everywhere, fonts via `next/font`
 
 ## Round 3 additions (12 Nov 2026)
 
-- **Key features** is now a scroll story: a sticky navy panel with an interactive Three.js scene (`src/components/three/FeatureScene.tsx`) that switches between four stages (coating layers, glazing configurator, rain/shield durability test, delivery truck) as the copy scrolls past. Drag to orbit; it pauses when off-screen.
+- **Key features** is a pinned scroll story: when the section reaches the header it locks in place, the four steps reveal one by one as you scroll (80svh of scroll each), and the Three.js scene (`src/components/three/FeatureScene.tsx`) switches stage to match (coating layers, glazing configurator, rain/shield durability test, delivery truck). After step four the page scrolls on normally. Step markers jump to a step. Viewports shorter than 540px fall back to a normal stacked layout. Drag to orbit; it pauses when off-screen.
+- **Image viewer** (`Lightbox.tsx`) supports swipe/drag left and right with a slide transition, plus buttons and arrow keys.
 - **Working areas** is an animated SVG network map (`src/components/WorkingAreas.tsx`): plants in Nashik and Jalgaon, routes drawn to six cities with travelling pulses, hover/focus a city chip to highlight its routes, plus a compact client-logo strip with lightbox.
 - **No page loads on filters**: gallery categories and project stages are client-side (`GalleryBrowser.tsx`, `ProjectsBrowser.tsx`) and update the URL and tab title with `history.replaceState`. The static routes still exist for SEO. `loading.tsx` was removed and the route fade shortened.
 - **SEO**: `sitemap.ts`, `robots.ts`, canonical URLs on every page, Open Graph images on products, and JSON-LD (Organization/LocalBusiness + WebSite in the layout, FAQPage on home, Product + BreadcrumbList on product pages, BreadcrumbList on gallery/projects). Builders live in `src/lib/seo.tsx`.

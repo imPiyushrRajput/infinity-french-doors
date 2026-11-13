@@ -349,3 +349,23 @@ label[for] {
 button:disabled {
   cursor: not-allowed;
 }
+
+/* Key Features: the track gives 80svh of scroll per step while the frame stays pinned under the header. */
+.features-track {
+  height: calc(100svh - 77px + 320svh);
+}
+.features-frame {
+  position: sticky;
+  top: 77px;
+  height: calc(100svh - 77px);
+}
+@media (max-height: 540px) {
+  .features-track {
+    height: auto;
+  }
+  .features-frame {
+    position: relative;
+    top: auto;
+    height: auto;
+  }
+}

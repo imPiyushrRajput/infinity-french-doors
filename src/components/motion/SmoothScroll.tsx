@@ -3,6 +3,14 @@
 import Lenis from "lenis";
 import { useEffect } from "react";
 
+let instance: Lenis | null = null;
+
+/** Scroll the page to an absolute Y position, through Lenis when it is running. */
+export function scrollToY(y: number) {
+  if (instance) instance.scrollTo(y, { duration: 1.1 });
+  else window.scrollTo({ top: y, behavior: "smooth" });
+}
+
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -14,6 +22,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       wheelMultiplier: 0.95,
       touchMultiplier: 1.4,
     });
+    instance = lenis;
 
     let raf = 0;
     const loop = (time: number) => {
@@ -33,6 +42,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       cancelAnimationFrame(raf);
       observer.disconnect();
       lenis.destroy();
+      instance = null;
     };
   }, []);
 

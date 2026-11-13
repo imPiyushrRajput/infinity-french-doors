@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, CloseIcon } from "./Icons";
@@ -38,6 +39,24 @@ export function useLightbox(items: LightboxItem[]) {
   return { index, open, close, prev, next };
 }
 
+/** Swipe distance (px) or flick speed (px/s) that flips to the next image. */
+const SWIPE_OFFSET = 60;
+const SWIPE_VELOCITY = 450;
+
+const slide = {
+  enter: (dir: number) => ({ x: dir === 0 ? 0 : dir > 0 ? "60%" : "-60%", opacity: 0, scale: dir === 0 ? 0.96 : 1 }),
+  center: { x: 0, opacity: 1, scale: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? "-60%" : dir < 0 ? "60%" : 0, opacity: 0 }),
+};
+
+function directionBetween(from: number | null, to: number | null, length: number) {
+  if (from === null || to === null || from === to) return 0;
+  const forward = (to - from + length) % length;
+  if (forward === 1) return 1;
+  if (forward === length - 1) return -1;
+  return to > from ? 1 : -1;
+}
+
 export function Lightbox({
   items,
   index,
@@ -51,24 +70,41 @@ export function Lightbox({
   onPrev: () => void;
   onNext: () => void;
 }) {
+  // Track which way we moved so the slide animation follows buttons, keys and swipes alike.
+  const [shown, setShown] = useState(index);
+  const [dir, setDir] = useState(0);
+  if (index !== shown) {
+    setDir(directionBetween(shown, index, items.length));
+    setShown(index);
+  }
+
   if (index === null || typeof document === "undefined") return null;
   const item = items[index];
+  const many = items.length > 1;
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    if (!many) return;
+    if (info.offset.x < -SWIPE_OFFSET || info.velocity.x < -SWIPE_VELOCITY) onNext();
+    else if (info.offset.x > SWIPE_OFFSET || info.velocity.x > SWIPE_VELOCITY) onPrev();
+  };
+
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/95 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-navy-950/95 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
+      aria-label={item.alt || item.caption || "Image viewer"}
       onClick={onClose}
     >
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+        className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
         aria-label="Close"
       >
         <CloseIcon className="h-5 w-5" />
       </button>
-      {items.length > 1 && (
+      {many && (
         <>
           <button
             type="button"
@@ -76,7 +112,7 @@ export function Lightbox({
               e.stopPropagation();
               onPrev();
             }}
-            className="absolute left-3 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6"
+            className="absolute left-3 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6"
             aria-label="Previous"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -87,7 +123,7 @@ export function Lightbox({
               e.stopPropagation();
               onNext();
             }}
-            className="absolute right-3 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6"
+            className="absolute right-3 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6"
             aria-label="Next"
           >
             <ChevronRight className="h-6 w-6" />
@@ -99,22 +135,43 @@ export function Lightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative h-[75vh] w-full">
-          <Image
-            key={item.src}
-            src={item.src}
-            alt={item.alt ?? ""}
-            fill
-            sizes="100vw"
-            className="animate-fade-up object-contain"
-          />
+          <AnimatePresence initial={false} custom={dir}>
+            <motion.div
+              key={item.src}
+              custom={dir}
+              variants={slide}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ x: { type: "spring", stiffness: 320, damping: 34 }, opacity: { duration: 0.25 } }}
+              drag={many ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.7}
+              dragMomentum={false}
+              onDragEnd={onDragEnd}
+              className={`absolute inset-0 ${many ? "cursor-grab touch-pan-y active:cursor-grabbing" : ""}`}
+            >
+              <Image
+                src={item.src}
+                alt={item.alt ?? ""}
+                fill
+                sizes="100vw"
+                draggable={false}
+                className="pointer-events-none select-none object-contain"
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
-        {(item.caption || items.length > 1) && (
-          <figcaption className="mt-4 flex items-center gap-4 text-sm text-white/70">
+        {(item.caption || many) && (
+          <figcaption className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-white/70">
             {item.caption && <span className="font-display text-lg text-white">{item.caption}</span>}
-            {items.length > 1 && (
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+            {many && (
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs tabular-nums">
                 {index + 1} / {items.length}
               </span>
+            )}
+            {many && (
+              <span className="hidden text-xs text-white/50 [@media(pointer:coarse)]:inline">Swipe to browse</span>
             )}
           </figcaption>
         )}
