@@ -7,6 +7,7 @@ import { ArrowRight } from "./Icons";
 import { ParallaxImage } from "./motion/Parallax";
 import { Reveal, WordReveal } from "./motion/Reveal";
 import { Magnetic, TiltCard } from "./motion/Interactive";
+import { CtaEmblem } from "./SceneSlots";
 
 /* ---------- Section heading ---------- */
 export function SectionHeading({
@@ -180,6 +181,7 @@ export function CtaBanner() {
       <div className="absolute inset-0 bg-gradient-to-r from-brand-600/40 via-transparent to-gold-500/10" />
       <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full border border-gold-400/20" />
       <div className="pointer-events-none absolute -bottom-32 -right-8 h-96 w-96 rounded-full border border-gold-400/10" />
+      <CtaEmblem />
       <div className="container-x relative flex flex-col items-start justify-between gap-10 py-20 lg:flex-row lg:items-center lg:py-28">
         <div className="max-w-2xl">
           <Reveal>

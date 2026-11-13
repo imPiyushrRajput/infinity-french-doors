@@ -105,3 +105,22 @@ Static generation for every page, `next/image` everywhere, fonts via `next/font`
 - **Contact form:** there is no server on Pages, so the form opens the visitor's email app pre-filled to the business address. To receive submissions directly, create a form endpoint (Formspree, Web3Forms, Getform) and deploy with `FORM_ENDPOINT=<url> npm run deploy:pages`.
 - GitHub's free plan only serves Pages from **public** repositories.
 - Auto-deploy on every push needs a GitHub Actions workflow; pushing one requires the `workflow` token scope (`gh auth refresh -s workflow`).
+
+## 3D scenes (13 Nov 2026)
+
+| Where | Scene | File |
+| --- | --- | --- |
+| Home hero | French door that opens on hover/scroll | `three/DoorScene.tsx` |
+| Home, Key Features | Pinned scroll story, four stages | `three/FeatureScene.tsx` |
+| Every product page | Interactive viewer: orbit, six finish previews, open/close. One procedural model per range (side panels, arch, grill, sill, bench, XXL with a scale figure) | `ProductViewer.tsx`, `three/ProductScene.tsx`, `three/productModels.ts` |
+| About | Pinned scroll story: a door assembles itself (frame, leaves, glazing, hardware) | `DoorAssembly.tsx`, `three/AssemblyScene.tsx` |
+| CTA banner (all pages, large screens) | Gold infinity emblem with drifting glass panes | `SceneSlots.tsx`, `three/InfinityScene.tsx` |
+| 404 | The hero door standing ajar | `SceneSlots.tsx` |
+
+Shared rules for all of them:
+
+- **Loaded late, paused early.** `useNear` mounts a scene (and downloads three.js) only when it is within 400px of the viewport; the canvas stops rendering frames when it scrolls off screen.
+- **Pinned scroll stories behave the same.** Key Features and the door assembly both use `.pin-track` / `.pin-frame` and the constants in `usePinned.ts`: 80svh of scroll per step, the same spring, the same step dots/counter, click-to-jump landing 40% into a step, and a stacked fallback under 540px viewport height.
+- **Touch.** `.scene-pan-y` lets a vertical swipe over any canvas scroll the page; horizontal drags rotate the model.
+- New product range? Add an entry to `productModels` keyed by the product slug.
+- Finish colours in the viewer are illustrative previews, not a confirmed shade card.

@@ -350,22 +350,28 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Key Features: the track gives 80svh of scroll per step while the frame stays pinned under the header. */
-.features-track {
-  height: calc(100svh - 77px + 320svh);
+/* Orbitable 3D scenes: let a vertical swipe scroll the page; horizontal drags still rotate the model. */
+.scene-pan-y canvas {
+  touch-action: pan-y !important;
 }
-.features-frame {
+
+/* Generic pinned scroll story: --pin-scroll is the scroll distance spent inside the pinned frame. */
+.pin-track {
+  height: calc(100svh - 77px + var(--pin-scroll, 300svh));
+}
+.pin-frame {
   position: sticky;
   top: 77px;
   height: calc(100svh - 77px);
 }
 @media (max-height: 540px) {
-  .features-track {
+  .pin-track {
     height: auto;
   }
-  .features-frame {
+  .pin-frame {
     position: relative;
     top: auto;
     height: auto;
+    padding-block: 3rem;
   }
 }

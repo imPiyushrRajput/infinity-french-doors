@@ -7,6 +7,7 @@ import { ParallaxImage, ParallaxLayer } from "@/components/motion/Parallax";
 import { Item, Reveal, Stagger, WordReveal, scaleIn } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/Interactive";
 import { aboutPage } from "@/data/site";
+import DoorAssembly from "@/components/DoorAssembly";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -175,6 +176,9 @@ export default function AboutPage() {
       </section>
 
       <CtaBanner />
+
+      {/* 3D: a door assembling itself on scroll */}
+      <DoorAssembly />
 
       {/* 2.8 Work process */}
       <section className="py-16 lg:py-24">

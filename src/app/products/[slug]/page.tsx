@@ -9,6 +9,7 @@ import { Item, Reveal, Stagger, WordReveal, scaleIn } from "@/components/motion/
 import { Magnetic, TiltCard } from "@/components/motion/Interactive";
 import { business, getProduct, products } from "@/data/site";
 import { JsonLd, breadcrumbLd, productLd } from "@/lib/seo";
+import ProductViewer from "@/components/ProductViewer";
 
 type Params = { slug: string };
 
@@ -150,6 +151,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
           </div>
         </div>
       </section>
+
+      {/* Interactive 3D model */}
+      <ProductViewer slug={product.slug} title={product.title} />
 
       {/* Sub-products */}
       <section className="bg-cream-100 py-16 lg:py-24">

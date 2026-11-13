@@ -2,17 +2,16 @@
 
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { CheckIcon } from "./Icons";
 import { scrollToY } from "./motion/SmoothScroll";
+import { useNear } from "./three/useNear";
+import { HEADER, STEP_LANDING, STEP_SVH, STORY_SPRING, pinnedScrollTarget, useShortViewport } from "./usePinned";
 
 const FeatureScene = dynamic(() => import("./three/FeatureScene"), {
   ssr: false,
   loading: () => <div className="h-full w-full" />,
 });
-
-/** Height of the sticky header once the page is scrolled (76px nav + 1px border). */
-const HEADER = 77;
 
 const steps = [
   {
@@ -45,29 +44,16 @@ const steps = [
   },
 ];
 
-/* Very short viewports (landscape phones) cannot fit the pinned layout; they get a normal stacked section. */
-const SHORT_QUERY = "(max-height: 540px)";
-const subscribeShort = (cb: () => void) => {
-  const mq = window.matchMedia(SHORT_QUERY);
-  mq.addEventListener("change", cb);
-  return () => mq.removeEventListener("change", cb);
-};
-const useShortViewport = () =>
-  useSyncExternalStore(
-    subscribeShort,
-    () => window.matchMedia(SHORT_QUERY).matches,
-    () => false,
-  );
-
 export default function KeyFeatures() {
   const ref = useRef<HTMLElement>(null);
+  const near = useNear(ref);
   const [active, setActive] = useState(0);
   const short = useShortViewport();
   const pinned = !short;
 
   // 0 when the section reaches the header, 1 when the pinned frame is released.
   const { scrollYProgress } = useScroll({ target: ref, offset: [`start ${HEADER}px`, "end end"] });
-  const rail = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
+  const rail = useSpring(scrollYProgress, STORY_SPRING);
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     const i = Math.min(steps.length - 1, Math.max(0, Math.floor(p * steps.length)));
     setActive((a) => (a === i ? a : i));
@@ -80,18 +66,22 @@ export default function KeyFeatures() {
       setActive(i);
       return;
     }
-    const start = el.getBoundingClientRect().top + window.scrollY - HEADER;
-    const distance = el.offsetHeight - (window.innerHeight - HEADER);
-    scrollToY(start + ((i + 0.4) / steps.length) * distance);
+    scrollToY(pinnedScrollTarget(el, (i + STEP_LANDING) / steps.length));
   };
 
   const step = steps[active];
 
   return (
-    <section ref={ref} id="features" className="features-track relative" aria-labelledby="features-title">
+    <section
+      ref={ref}
+      id="features"
+      className="pin-track relative"
+      style={{ "--pin-scroll": `${steps.length * STEP_SVH}svh` } as CSSProperties}
+      aria-labelledby="features-title"
+    >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full bg-gradient-to-b from-transparent via-cream-100/60 to-transparent" />
 
-      <div className="features-frame overflow-hidden">
+      <div className="pin-frame overflow-hidden">
         <div className="container-x relative flex h-full flex-col justify-center gap-4 py-4 sm:gap-6 lg:grid lg:grid-cols-12 lg:grid-rows-[auto_auto] lg:content-center lg:gap-x-14 lg:gap-y-6 lg:py-8">
           {/* Heading */}
           <div className="lg:col-span-6 lg:col-start-7 lg:row-start-1 lg:self-end">
@@ -144,8 +134,8 @@ export default function KeyFeatures() {
                 </div>
               </div>
 
-              <div className="relative min-h-0 flex-1" data-cursor="Drag">
-                <FeatureScene step={active} />
+              <div className="scene-pan-y relative min-h-0 flex-1" data-cursor="Drag">
+                {near && <FeatureScene step={active} />}
               </div>
 
               {/* Legend */}
